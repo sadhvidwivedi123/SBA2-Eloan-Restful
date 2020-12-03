@@ -2,9 +2,12 @@ package com.iiht.training.eloan.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +21,7 @@ import com.iiht.training.eloan.dto.RejectDto;
 import com.iiht.training.eloan.dto.SanctionDto;
 import com.iiht.training.eloan.dto.SanctionOutputDto;
 import com.iiht.training.eloan.dto.exception.ExceptionResponse;
+import com.iiht.training.eloan.dto.exception.LoanException;
 import com.iiht.training.eloan.exception.AlreadyFinalizedException;
 import com.iiht.training.eloan.exception.ManagerNotFoundException;
 import com.iiht.training.eloan.service.ManagerService;
@@ -30,22 +34,31 @@ public class ManagerController {
 	private ManagerService managerService;
 	
 	@GetMapping("/all-processed")
-	public ResponseEntity<List<LoanOutputDto>> allProcessedLoans() {
-		return null;
+	public ResponseEntity<List<LoanOutputDto>> allProcessedLoans() throws LoanException {
+		return new ResponseEntity<List<LoanOutputDto>>(managerService.allProcessedLoans(),HttpStatus.OK);
 	}
 	
 	@PostMapping("/reject-loan/{managerId}/{loanAppId}")
 	public ResponseEntity<RejectDto> rejectLoan(@PathVariable Long managerId,
 												@PathVariable Long loanAppId,
-												@RequestBody RejectDto rejectDto){
-		return null;
+												@RequestBody @Valid RejectDto rejectDto, BindingResult result) throws LoanException{
+		if(result.hasErrors())
+		{
+			LoanException.toErrExceptions(result.getAllErrors());
+		}
+		return new ResponseEntity<RejectDto>(managerService.rejectLoan(managerId, loanAppId, rejectDto),HttpStatus.OK);
+		
 	}
 	
 	@PostMapping("/sanction-loan/{managerId}/{loanAppId}")
 	public ResponseEntity<SanctionOutputDto> sanctionLoan(@PathVariable Long managerId,
 												@PathVariable Long loanAppId,
-												@RequestBody SanctionDto sanctionDto){
-		return null;
+												@RequestBody @Valid SanctionDto sanctionDto, BindingResult result) throws LoanException{
+		if(result.hasErrors())
+		{
+			LoanException.toErrExceptions(result.getAllErrors());
+		}
+		return new ResponseEntity<SanctionOutputDto>(managerService.sanctionLoan(managerId, loanAppId, sanctionDto),HttpStatus.OK);
 	}
 	
 	@ExceptionHandler(ManagerNotFoundException.class)

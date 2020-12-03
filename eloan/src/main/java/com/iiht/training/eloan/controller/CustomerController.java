@@ -2,9 +2,12 @@ package com.iiht.training.eloan.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +20,7 @@ import com.iiht.training.eloan.dto.LoanDto;
 import com.iiht.training.eloan.dto.LoanOutputDto;
 import com.iiht.training.eloan.dto.UserDto;
 import com.iiht.training.eloan.dto.exception.ExceptionResponse;
+import com.iiht.training.eloan.dto.exception.LoanException;
 import com.iiht.training.eloan.exception.CustomerNotFoundException;
 import com.iiht.training.eloan.service.CustomerService;
 
@@ -28,24 +32,47 @@ public class CustomerController {
 	private CustomerService customerService;
 	
 	@PostMapping("/register")
-	public ResponseEntity<UserDto> register(@RequestBody UserDto userDto){
-		return null;
+	public ResponseEntity<UserDto> register(@RequestBody @Valid UserDto userDto, BindingResult result) throws LoanException{
+		ResponseEntity<UserDto> response= null;
+		
+		if(result.hasErrors()) {
+			
+			LoanException.toErrExceptions(result.getAllErrors());
+		}else {
+			userDto= customerService.register(userDto);
+			response=new ResponseEntity<UserDto>(userDto, HttpStatus.OK) ;response=new ResponseEntity<UserDto>(userDto, HttpStatus.OK) ;
+		}
+		return response; 
 	}
 	
 	@PostMapping("/apply-loan/{customerId}")
 	public ResponseEntity<LoanOutputDto> applyLoan(@PathVariable Long customerId,
-												 @RequestBody LoanDto loanDto){
-		return null;
+												 @RequestBody @Valid LoanDto loanDto, BindingResult result) throws LoanException{
+		ResponseEntity<LoanOutputDto> response= null;
+		
+		if(result.hasErrors()) {
+			
+			LoanException.toErrExceptions(result.getAllErrors());
+			
+		}else {
+			
+			
+			LoanOutputDto loanOutputDto = customerService.applyLoan(customerId, loanDto);
+			response=new ResponseEntity<LoanOutputDto>(loanOutputDto, HttpStatus.OK) ;
+		}
+		
+		return response;
 	}
 	
 	@GetMapping("/loan-status/{loanAppId}")
-	public ResponseEntity<LoanOutputDto> getStatus(@PathVariable Long loanAppId){
-		return null;
+	public ResponseEntity<LoanOutputDto> getStatus(@PathVariable Long loanAppId) throws LoanException{
+
+		return new ResponseEntity<LoanOutputDto>(customerService.getStatus(loanAppId),HttpStatus.OK);
 	}
 	
 	@GetMapping("/loan-status-all/{customerId}")
-	public ResponseEntity<List<LoanOutputDto>> getStatusAll(@PathVariable Long customerId){
-		return null;
+	public ResponseEntity<List<LoanOutputDto>> getStatusAll(@PathVariable Long customerId) throws LoanException{
+		return new ResponseEntity<List<LoanOutputDto>>(customerService.getStatusAll(customerId),HttpStatus.OK);
 	}
 	
 	@ExceptionHandler(CustomerNotFoundException.class)

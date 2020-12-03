@@ -1,14 +1,70 @@
 package com.iiht.training.eloan.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class LoanOutputDto {
+	
+	@NotNull(message="Customer Id cannot be null")
+	@NotBlank(message="Customer Id cannot be blank")
 	private Long customerId;
+	
+	@NotNull(message="Loan Application Id cannot be null")
+	@NotBlank(message="Loan Application Id cannot be blank")
 	private Long loanAppId;
+	
+	@NotNull(message="User info cannot be null")
 	private UserDto userDto;
+	
+	@NotNull(message="Loan info cannot be null")
 	private LoanDto loanDto;
+	
+	@NotNull(message="Loan Processing info cannot be null")
 	private ProcessingDto processingDto;
+	
+	@NotNull(message="Loan Sanction info cannot be null")
 	private SanctionOutputDto sanctionOutputDto;
+	
+	@NotNull(message="Status cannot be null")
+	@NotBlank(message="Status cannot be blank")
 	private String status;
+	
+	@NotNull(message="Remark cannot be null")
+	@NotBlank(message="Remark cannot be blank")
 	private String remark;
+	
+	public LoanOutputDto() {
+		
+	}
+	
+	public LoanOutputDto(
+			@NotNull(message = "Customer Id cannot be null") @NotBlank(message = "Customer Id cannot be blank") Long customerId,
+			@NotNull(message = "Loan Application Id cannot be null") @NotBlank(message = "Loan Application Id cannot be blank") Long loanAppId,
+			@NotNull(message = "User info cannot be null") UserDto userDto,
+			@NotNull(message = "Loan info cannot be null") LoanDto loanDto,
+			@NotNull(message = "Loan Processing info cannot be null") ProcessingDto processingDto,
+			@NotNull(message = "Loan Sanction info cannot be null") SanctionOutputDto sanctionOutputDto,
+			@NotNull(message = "Status cannot be null") @NotBlank(message = "Status cannot be blank") String status,
+			@NotNull(message = "Remark cannot be null") @NotBlank(message = "Remark cannot be blank") String remark) {
+		super();
+		this.customerId = customerId;
+		this.loanAppId = loanAppId;
+		this.userDto = userDto;
+		this.loanDto = loanDto;
+		this.processingDto = processingDto;
+		this.sanctionOutputDto = sanctionOutputDto;
+		this.status = status;
+		this.remark = remark;
+	}
+	public LoanOutputDto(Long customerId, Long loanAppId,UserDto userDto,LoanDto loanDto,String status)
+	{
+		this.customerId=customerId;
+		this.loanAppId=loanAppId;
+		this.userDto=userDto;
+		this.loanDto=loanDto;
+		this.status=status;
+		
+	}
 	public Long getCustomerId() {
 		return customerId;
 	}
